@@ -10,7 +10,7 @@ type ServiceInterface interface {
 	UserService
 	PhotoService
 	CommentService
-	// SocialMediaService
+	SocialMediaService
 }
 
 func NewService(repo repositories.RepoInterface) ServiceInterface {
