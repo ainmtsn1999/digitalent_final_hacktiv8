@@ -34,4 +34,15 @@ func InitApi(router *gin.Engine, handler handlers.HttpServer) {
 		commentRouter.DELETE("/:commentId", middlewares.CommentAuth(), handler.DeleteComment)
 
 	}
+
+	sosmedRouter := router.Group("/socialmedia")
+	{
+		sosmedRouter.Use(middlewares.Authentication())
+		sosmedRouter.GET("/", handler.GetAllSocialMedia)
+		sosmedRouter.GET("/:sosmedId", handler.GetSocialMedia)
+		sosmedRouter.POST("/", handler.CreateSocialMedia)
+		sosmedRouter.PUT("/:sosmedId", middlewares.SosmedAuth(), handler.UpdateSocialMedia)
+		sosmedRouter.DELETE("/:sosmedId", middlewares.SosmedAuth(), handler.DeleteSocialMedia)
+
+	}
 }

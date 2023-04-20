@@ -12,7 +12,7 @@ type RepoInterface interface {
 	UserRepo
 	PhotoRepo
 	CommentRepo
-	// SocialMediaRepo
+	SocialMediaRepo
 }
 
 // constructor function
