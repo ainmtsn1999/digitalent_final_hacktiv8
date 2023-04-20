@@ -24,7 +24,7 @@ func (r Repo) CreateComment(in models.Comment) (res models.Comment, err error) {
 }
 
 func (r Repo) GetAllComment() (res []models.Comment, err error) {
-	err = r.gorm.Find(&res).Error
+	err = r.gorm.Preload("User").Preload("Photo").Find(&res).Error
 
 	if err != nil {
 		return res, err
@@ -34,7 +34,7 @@ func (r Repo) GetAllComment() (res []models.Comment, err error) {
 }
 
 func (r Repo) GetCommentById(id int64) (res models.Comment, err error) {
-	err = r.gorm.First(&res, id).Error
+	err = r.gorm.Preload("User").Preload("Photo").First(&res, id).Error
 
 	if err != nil {
 		return res, err

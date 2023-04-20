@@ -24,7 +24,7 @@ func (r Repo) CreatePhoto(in models.Photo) (res models.Photo, err error) {
 }
 
 func (r Repo) GetAllPhoto() (res []models.Photo, err error) {
-	err = r.gorm.Find(&res).Error
+	err = r.gorm.Preload("User").Preload("Comments").Find(&res).Error
 
 	if err != nil {
 		return res, err
@@ -34,7 +34,7 @@ func (r Repo) GetAllPhoto() (res []models.Photo, err error) {
 }
 
 func (r Repo) GetPhotoById(id int64) (res models.Photo, err error) {
-	err = r.gorm.First(&res, id).Error
+	err = r.gorm.Preload("User").Preload("Comments").First(&res, id).Error
 
 	if err != nil {
 		return res, err
