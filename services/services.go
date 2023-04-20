@@ -8,9 +8,9 @@ type Service struct {
 
 type ServiceInterface interface {
 	UserService
-	// PhotoService
+	PhotoService
+	CommentService
 	// SocialMediaService
-	// CommentService
 }
 
 func NewService(repo repositories.RepoInterface) ServiceInterface {

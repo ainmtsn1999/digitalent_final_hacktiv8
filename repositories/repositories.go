@@ -10,9 +10,9 @@ type Repo struct {
 
 type RepoInterface interface {
 	UserRepo
-	// PhotoRepo
+	PhotoRepo
+	CommentRepo
 	// SocialMediaRepo
-	// CommentRepo
 }
 
 // constructor function

@@ -27,6 +27,8 @@ type GormDb struct {
 
 var (
 	GORM *GormDb
+	Db   *gorm.DB
+	err  error
 )
 
 func InitGorm() error {
@@ -53,12 +55,12 @@ func (p *Gorm) OpenConnection() error {
 	// init dsn
 	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", p.Address, p.Port, p.Username, p.Password, p.Database)
 
-	dbConnection, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	Db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		return err
 	}
 
-	p.DB = dbConnection
+	p.DB = Db
 
 	err = p.DB.Debug().AutoMigrate(models.User{}, models.Photo{}, models.Comment{}, models.SocialMedia{})
 	if err != nil {
@@ -68,4 +70,8 @@ func (p *Gorm) OpenConnection() error {
 	fmt.Println("Successfully connected to database using gorm")
 
 	return nil
+}
+
+func GetDB() *gorm.DB {
+	return Db
 }
