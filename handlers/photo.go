@@ -14,10 +14,9 @@ import (
 func (h HttpServer) CreatePhoto(c *gin.Context) {
 	contentType := helpers.GetContentType(c)
 	userData := c.MustGet("userData").(jwt.MapClaims)
+	userID := userData["id"].(float64)
 
 	photo := models.Photo{}
-	userID := uint(userData["id"].(float64))
-
 	if contentType == helpers.AppJSON {
 		c.ShouldBindJSON(&photo)
 	} else {
@@ -37,14 +36,13 @@ func (h HttpServer) CreatePhoto(c *gin.Context) {
 func (h HttpServer) UpdatePhoto(c *gin.Context) {
 	contentType := helpers.GetContentType(c)
 	userData := c.MustGet("userData").(jwt.MapClaims)
+	userID := userData["id"].(float64)
 
 	photoId, err := strconv.Atoi(c.Param("photoId"))
 	if err != nil {
 		helpers.ErrorResponse(c, "must be a valid id", err.Error(), http.StatusBadRequest)
 		return
 	}
-
-	userID := uint(userData["id"].(float64))
 
 	photo := models.Photo{}
 	photo.UserID = int(userID)
@@ -112,6 +110,24 @@ func (h HttpServer) GetPhoto(c *gin.Context) {
 func (h HttpServer) GetAllPhoto(c *gin.Context) {
 
 	res, err := h.app.GetAllPhoto()
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			helpers.ErrorResponse(c, "get all photo failed", err.Error(), http.StatusNotFound)
+			return
+		}
+		helpers.ErrorResponse(c, "get all photo failed", err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	helpers.SuccessResponse(c, "get all photo success", res, http.StatusOK)
+}
+
+func (h HttpServer) GetAllPhotoByUserId(c *gin.Context) {
+
+	userData := c.MustGet("userData").(jwt.MapClaims)
+	userID := userData["id"].(float64)
+
+	res, err := h.app.GetAllPhotoByUserId(int64(userID))
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			helpers.ErrorResponse(c, "get all photo failed", err.Error(), http.StatusNotFound)

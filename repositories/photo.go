@@ -8,6 +8,7 @@ import (
 type PhotoRepo interface {
 	CreatePhoto(in models.Photo) (res models.Photo, err error)
 	GetAllPhoto() (res []models.Photo, err error)
+	GetAllPhotoByUserId(id int64) (res []models.Photo, err error)
 	GetPhotoById(id int64) (res models.Photo, err error)
 	UpdatePhoto(in models.Photo) (res models.Photo, err error)
 	DeletePhoto(id int64) (err error)
@@ -25,6 +26,15 @@ func (r Repo) CreatePhoto(in models.Photo) (res models.Photo, err error) {
 
 func (r Repo) GetAllPhoto() (res []models.Photo, err error) {
 	err = r.gorm.Preload("User").Preload("Comments").Find(&res).Error
+
+	if err != nil {
+		return res, err
+	}
+
+	return res, nil
+}
+func (r Repo) GetAllPhotoByUserId(id int64) (res []models.Photo, err error) {
+	err = r.gorm.Where("user_id = ?", id).Preload("User").Preload("Comments").Find(&res).Error
 
 	if err != nil {
 		return res, err

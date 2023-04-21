@@ -14,6 +14,7 @@ import (
 func (h HttpServer) CreateComment(c *gin.Context) {
 	contentType := helpers.GetContentType(c)
 	userData := c.MustGet("userData").(jwt.MapClaims)
+	userID := userData["id"].(float64)
 
 	photoId, err := strconv.Atoi(c.Param("photoId"))
 	if err != nil {
@@ -22,7 +23,6 @@ func (h HttpServer) CreateComment(c *gin.Context) {
 	}
 
 	comment := models.Comment{}
-	userID := userData["id"].(float64)
 
 	if contentType == helpers.AppJSON {
 		c.ShouldBindJSON(&comment)
@@ -54,14 +54,13 @@ func (h HttpServer) CreateComment(c *gin.Context) {
 func (h HttpServer) UpdateComment(c *gin.Context) {
 	contentType := helpers.GetContentType(c)
 	userData := c.MustGet("userData").(jwt.MapClaims)
+	userID := userData["id"].(float64)
 
 	commentId, err := strconv.Atoi(c.Param("commentId"))
 	if err != nil {
 		helpers.ErrorResponse(c, "must be a valid id", err.Error(), http.StatusBadRequest)
 		return
 	}
-
-	userID := userData["id"].(float64)
 
 	comment := models.Comment{}
 	comment.UserID = int(userID)
@@ -129,6 +128,23 @@ func (h HttpServer) GetComment(c *gin.Context) {
 func (h HttpServer) GetAllComment(c *gin.Context) {
 
 	res, err := h.app.GetAllComment()
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			helpers.ErrorResponse(c, "get all comment failed", err.Error(), http.StatusNotFound)
+			return
+		}
+		helpers.ErrorResponse(c, "get all comment failed", err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	helpers.SuccessResponse(c, "get all comment success", res, http.StatusOK)
+}
+
+func (h HttpServer) GetAllCommentByUserId(c *gin.Context) {
+	userData := c.MustGet("userData").(jwt.MapClaims)
+	userID := userData["id"].(float64)
+
+	res, err := h.app.GetAllCommentByUserId(int64(userID))
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			helpers.ErrorResponse(c, "get all comment failed", err.Error(), http.StatusNotFound)

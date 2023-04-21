@@ -8,6 +8,7 @@ import (
 type CommentRepo interface {
 	CreateComment(in models.Comment) (res models.Comment, err error)
 	GetAllComment() (res []models.Comment, err error)
+	GetAllCommentByUserId(id int64) (res []models.Comment, err error)
 	GetCommentById(id int64) (res models.Comment, err error)
 	UpdateComment(in models.Comment) (res models.Comment, err error)
 	DeleteComment(id int64) (err error)
@@ -25,6 +26,16 @@ func (r Repo) CreateComment(in models.Comment) (res models.Comment, err error) {
 
 func (r Repo) GetAllComment() (res []models.Comment, err error) {
 	err = r.gorm.Preload("User").Preload("Photo").Find(&res).Error
+
+	if err != nil {
+		return res, err
+	}
+
+	return res, nil
+}
+
+func (r Repo) GetAllCommentByUserId(id int64) (res []models.Comment, err error) {
+	err = r.gorm.Where("user_id = ?", id).Preload("User").Preload("Photo").Find(&res).Error
 
 	if err != nil {
 		return res, err

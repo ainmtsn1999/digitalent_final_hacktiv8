@@ -9,6 +9,7 @@ type SocialMediaRepo interface {
 	CreateSocialMedia(in models.SocialMedia) (res models.SocialMedia, err error)
 	GetAllSocialMedia() (res []models.SocialMedia, err error)
 	GetSocialMediaById(id int64) (res models.SocialMedia, err error)
+	GetSocialMediaByUserId(id int64) (res models.SocialMedia, err error)
 	UpdateSocialMedia(in models.SocialMedia) (res models.SocialMedia, err error)
 	DeleteSocialMedia(id int64) (err error)
 }
@@ -35,6 +36,15 @@ func (r Repo) GetAllSocialMedia() (res []models.SocialMedia, err error) {
 
 func (r Repo) GetSocialMediaById(id int64) (res models.SocialMedia, err error) {
 	err = r.gorm.First(&res, id).Error
+	if err != nil {
+		return res, err
+	}
+
+	return res, nil
+}
+
+func (r Repo) GetSocialMediaByUserId(id int64) (res models.SocialMedia, err error) {
+	err = r.gorm.Where("user_id = ?", id).First(&res).Error
 	if err != nil {
 		return res, err
 	}
