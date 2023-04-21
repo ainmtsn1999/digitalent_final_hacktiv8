@@ -14,9 +14,9 @@ import (
 func (h HttpServer) CreateSocialMedia(c *gin.Context) {
 	contentType := helpers.GetContentType(c)
 	userData := c.MustGet("userData").(jwt.MapClaims)
+	userID := userData["id"].(float64)
 
 	socialmedia := models.SocialMedia{}
-	userID := userData["id"].(float64)
 
 	if contentType == helpers.AppJSON {
 		c.ShouldBindJSON(&socialmedia)
@@ -42,14 +42,13 @@ func (h HttpServer) CreateSocialMedia(c *gin.Context) {
 func (h HttpServer) UpdateSocialMedia(c *gin.Context) {
 	contentType := helpers.GetContentType(c)
 	userData := c.MustGet("userData").(jwt.MapClaims)
+	userID := userData["id"].(float64)
 
 	sosmedId, err := strconv.Atoi(c.Param("sosmedId"))
 	if err != nil {
 		helpers.ErrorResponse(c, "must be a valid id", err.Error(), http.StatusBadRequest)
 		return
 	}
-
-	userID := userData["id"].(float64)
 
 	socialmedia := models.SocialMedia{}
 	socialmedia.UserID = int(userID)
@@ -102,6 +101,23 @@ func (h HttpServer) GetSocialMedia(c *gin.Context) {
 	}
 
 	res, err := h.app.GetSocialMediaById(int64(sosmedId))
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			helpers.ErrorResponse(c, "get social media failed", err.Error(), http.StatusNotFound)
+			return
+		}
+		helpers.ErrorResponse(c, "get social media failed", err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	helpers.SuccessResponse(c, "get social media success", res, http.StatusOK)
+}
+
+func (h HttpServer) GetSocialMediaByUserId(c *gin.Context) {
+	userData := c.MustGet("userData").(jwt.MapClaims)
+	userID := userData["id"].(float64)
+
+	res, err := h.app.GetSocialMediaByUserId(int64(userID))
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			helpers.ErrorResponse(c, "get social media failed", err.Error(), http.StatusNotFound)

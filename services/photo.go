@@ -5,6 +5,7 @@ import "github.com/ainmtsn1999/digitalent_final_hacktiv8/models"
 type PhotoService interface {
 	CreatePhoto(in models.Photo) (res models.Photo, err error)
 	GetAllPhoto() (res []models.Photo, err error)
+	GetAllPhotoByUserId(id int64) (res []models.Photo, err error)
 	GetPhotoById(id int64) (res models.Photo, err error)
 	UpdatePhoto(in models.Photo) (res models.Photo, err error)
 	DeletePhoto(id int64) (err error)
@@ -15,6 +16,9 @@ func (s *Service) CreatePhoto(in models.Photo) (res models.Photo, err error) {
 }
 func (s *Service) GetAllPhoto() (res []models.Photo, err error) {
 	return s.repo.GetAllPhoto()
+}
+func (s *Service) GetAllPhotoByUserId(id int64) (res []models.Photo, err error) {
+	return s.repo.GetAllPhotoByUserId(id)
 }
 func (s *Service) GetPhotoById(id int64) (res models.Photo, err error) {
 	return s.repo.GetPhotoById(id)

@@ -17,6 +17,7 @@ func InitApi(router *gin.Engine, handler handlers.HttpServer) {
 	{
 		photoRouter.Use(middlewares.Authentication())
 		photoRouter.GET("/", handler.GetAllPhoto)
+		photoRouter.GET("/me", handler.GetAllPhotoByUserId)
 		photoRouter.GET("/:photoId", handler.GetPhoto)
 		photoRouter.POST("/", handler.CreatePhoto)
 		photoRouter.PUT("/:photoId", middlewares.PhotoAuth(), handler.UpdatePhoto)
@@ -29,6 +30,7 @@ func InitApi(router *gin.Engine, handler handlers.HttpServer) {
 	{
 		commentRouter.Use(middlewares.Authentication())
 		commentRouter.GET("/", handler.GetAllComment)
+		commentRouter.GET("/me", handler.GetAllCommentByUserId)
 		commentRouter.GET("/:commentId", handler.GetComment)
 		commentRouter.PUT("/:commentId", middlewares.CommentAuth(), handler.UpdateComment)
 		commentRouter.DELETE("/:commentId", middlewares.CommentAuth(), handler.DeleteComment)
@@ -39,6 +41,7 @@ func InitApi(router *gin.Engine, handler handlers.HttpServer) {
 	{
 		sosmedRouter.Use(middlewares.Authentication())
 		sosmedRouter.GET("/", handler.GetAllSocialMedia)
+		sosmedRouter.GET("/me", handler.GetSocialMediaByUserId)
 		sosmedRouter.GET("/:sosmedId", handler.GetSocialMedia)
 		sosmedRouter.POST("/", handler.CreateSocialMedia)
 		sosmedRouter.PUT("/:sosmedId", middlewares.SosmedAuth(), handler.UpdateSocialMedia)
