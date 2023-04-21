@@ -6,13 +6,21 @@ import (
 
 // interface employee
 type UserService interface {
-	UserRegister(in models.User) (res models.User, err error)
+	UserRegister(in models.User) (res models.UserResponse, err error)
 	UserLogin(in models.User) (res models.User, err error)
 }
 
-func (s *Service) UserRegister(in models.User) (res models.User, err error) {
-	return s.repo.UserRegister(in)
+func (s *Service) UserRegister(in models.User) (result models.UserResponse, err error) {
+	res, err := s.repo.UserRegister(in)
+	if err != nil {
+		return result, err
+	}
+
+	result = *res.ParseToModel()
+
+	return result, nil
 }
+
 func (s *Service) UserLogin(in models.User) (res models.User, err error) {
 	return s.repo.UserLogin(in)
 }

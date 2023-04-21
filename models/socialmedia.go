@@ -12,6 +12,22 @@ type SocialMedia struct {
 	UserID         int    `json:"user_id" gorm:"not null;uniqueIndex"`
 }
 
+type SocialMediaResponse struct {
+	Id             int    `json:"id"`
+	Name           string `json:"name"`
+	SocialMediaUrl string `json:"social_media_url"`
+	UserID         int    `json:"user_id"`
+}
+
+func (u *SocialMedia) ParseToModel() *SocialMediaResponse {
+	return &SocialMediaResponse{
+		Id:             u.Id,
+		Name:           u.Name,
+		SocialMediaUrl: u.SocialMediaUrl,
+		UserID:         u.UserID,
+	}
+}
+
 // hooks
 func (u *SocialMedia) BeforeCreate(tx *gorm.DB) (err error) {
 	_, err = govalidator.ValidateStruct(u)

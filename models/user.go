@@ -17,6 +17,28 @@ type User struct {
 	SocialMedia *SocialMedia `json:"social_media,omitempty" gorm:"OnUpdate:CASCADE,OnDelete:SET NULL"`
 }
 
+type UserResponse struct {
+	Id          int          `json:"id"`
+	Username    string       `json:"username"`
+	Email       string       `json:"email"`
+	Age         int          `json:"age"`
+	Photos      []Photo      `json:"photos,omitempty"`
+	Comments    []Comment    `json:"comments,omitempty"`
+	SocialMedia *SocialMedia `json:"social_media,omitempty"`
+}
+
+func (u *User) ParseToModel() *UserResponse {
+	return &UserResponse{
+		Id:          u.Id,
+		Username:    u.Username,
+		Email:       u.Email,
+		Age:         u.Age,
+		Photos:      u.Photos,
+		Comments:    u.Comments,
+		SocialMedia: u.SocialMedia,
+	}
+}
+
 // hooks
 func (u *User) BeforeCreate(tx *gorm.DB) (err error) {
 	_, err = govalidator.ValidateStruct(u)
